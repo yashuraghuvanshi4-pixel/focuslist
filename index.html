@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusList — Minimalist & Powerful Task Management</title>
+  <meta name="description" content="A clean, responsive, frontend-only daily task manager with priority tagging, instant search, statistics, and local persistence.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">FocusList</h1>
+          <span class="brand-tagline">Stay organized, focused, and ahead.</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-shortcuts" class="icon-btn" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"></path>
+          </svg>
+        </button>
+
+        <button id="btn-export-import" class="icon-btn" title="Data Backup & Restore" aria-label="Data Backup and Restore">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </button>
+
+        <button id="btn-theme-toggle" class="icon-btn theme-toggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+          <span class="theme-icon-sun" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+          </span>
+          <span class="theme-icon-moon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Statistics Cards -->
+    <section class="stats-section" aria-label="Task Statistics">
+      <div class="stat-card">
+        <div class="stat-meta">
+          <span class="stat-label">Total Tasks</span>
+          <span class="stat-icon stat-icon-total">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M9 3v18M3 9h18"></path>
+            </svg>
+          </span>
+        </div>
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-hint">All items recorded</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-meta">
+          <span class="stat-label">Pending</span>
+          <span class="stat-icon stat-icon-pending">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </span>
+        </div>
+        <div class="stat-value" id="stat-pending">0</div>
+        <div class="stat-hint">In progress or to-do</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-meta">
+          <span class="stat-label">Completed</span>
+          <span class="stat-icon stat-icon-completed">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </span>
+        </div>
+        <div class="stat-value" id="stat-completed">0</div>
+        <div class="stat-hint">Finished tasks</div>
+      </div>
+
+      <div class="stat-card stat-card-progress">
+        <div class="stat-meta">
+          <span class="stat-label">Progress</span>
+          <span class="stat-percentage" id="stat-percentage">0%</span>
+        </div>
+        <div class="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progress-container">
+          <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <div class="stat-hint" id="stat-progress-text">0 of 0 completed</div>
+      </div>
+    </section>
+
+    <!-- Task Creation Form -->
+    <section class="creation-section">
+      <form id="task-form" class="task-form" autocomplete="off">
+        <div class="form-input-container">
+          <label for="task-input" class="sr-only">Task Title</label>
+          <div class="input-prefix-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="task-input" 
+            name="taskTitle" 
+            class="task-input" 
+            placeholder="What needs to be done? (Press 'N' to focus)"
+            maxlength="200"
+            required
+          >
+          <div class="char-count" id="char-count" aria-hidden="true"></div>
+        </div>
+
+        <div class="form-controls-row">
+          <div class="priority-picker-wrapper">
+            <span class="picker-label">Priority:</span>
+            <div class="priority-options" role="radiogroup" aria-label="Task Priority">
+              <label class="priority-option option-high" title="High Priority">
+                <input type="radio" name="taskPriority" value="high">
+                <span class="priority-badge-radio badge-high">
+                  <span class="dot"></span>
+                  High
+                </span>
+              </label>
+
+              <label class="priority-option option-medium" title="Medium Priority">
+                <input type="radio" name="taskPriority" value="medium" checked>
+                <span class="priority-badge-radio badge-medium">
+                  <span class="dot"></span>
+                  Medium
+                </span>
+              </label>
+
+              <label class="priority-option option-low" title="Low Priority">
+                <input type="radio" name="taskPriority" value="low">
+                <span class="priority-badge-radio badge-low">
+                  <span class="dot"></span>
+                  Low
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="btn-add-task">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Task</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Toolbar: Search & Filters -->
+    <section class="toolbar-section">
+      <!-- Search Input -->
+      <div class="search-box">
+        <label for="search-input" class="sr-only">Search tasks</label>
+        <span class="search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Search tasks... (Press '/' or Ctrl+K)"
+        >
+        <button id="btn-clear-search" class="clear-search-btn" title="Clear search" aria-label="Clear search" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="filter-controls">
+        <!-- Status Filter Tabs -->
+        <div class="status-tabs" role="tablist" aria-label="Task Status Filters">
+          <button role="tab" aria-selected="true" class="tab-btn active" data-status="all" id="tab-all">
+            All <span class="tab-badge" id="badge-count-all">0</span>
+          </button>
+          <button role="tab" aria-selected="false" class="tab-btn" data-status="active" id="tab-active">
+            Active <span class="tab-badge" id="badge-count-active">0</span>
+          </button>
+          <button role="tab" aria-selected="false" class="tab-btn" data-status="completed" id="tab-completed">
+            Completed <span class="tab-badge" id="badge-count-completed">0</span>
+          </button>
+        </div>
+
+        <!-- Priority Filter Dropdown -->
+        <div class="priority-filter-wrapper">
+          <label for="priority-filter" class="sr-only">Filter by Priority</label>
+          <div class="select-wrapper">
+            <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <select id="priority-filter" class="select-input">
+              <option value="all">All Priorities</option>
+              <option value="high">🔴 High Priority</option>
+              <option value="medium">🟡 Medium Priority</option>
+              <option value="low">🟢 Low Priority</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Task List Action Bar (Active filter info & clear completed) -->
+    <div class="list-meta-bar" id="list-meta-bar">
+      <div class="active-filter-indicator" id="filter-indicator-text">Showing all tasks</div>
+      <div class="bulk-actions">
+        <button id="btn-clear-completed" class="text-btn text-btn-danger" hidden>
+          Clear Completed
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Task List Container -->
+    <main class="tasks-container">
+      <ul id="task-list" class="task-list" role="list" aria-label="Tasks">
+        <!-- Rendered dynamically by JavaScript -->
+      </ul>
+
+      <!-- Empty State -->
+      <div id="empty-state" class="empty-state" hidden>
+        <div class="empty-illustration" id="empty-icon" aria-hidden="true">
+          <!-- Dynamic SVG -->
+        </div>
+        <h2 class="empty-title" id="empty-title">No tasks found</h2>
+        <p class="empty-desc" id="empty-desc">Your task list is empty. Add a task above to get started!</p>
+        <button id="btn-reset-filters" class="btn btn-secondary" hidden>
+          Reset Search & Filters
+        </button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-tips">
+        <span>💡 Double-click task to edit &bull; Press <kbd>Enter</kbd> to save &bull; Press <kbd>Esc</kbd> to cancel</span>
+      </div>
+      <div class="footer-links">
+        <span class="storage-tag">⚡ Local Storage Active</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <dialog id="shortcuts-dialog" class="app-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h3 id="dialog-title">Keyboard Shortcuts</h3>
+        <button class="icon-btn close-dialog-btn" id="btn-close-shortcuts" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Focus Quick Add Task Input</span>
+          <kbd>N</kbd>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Focus Search Bar</span>
+          <span><kbd>/</kbd> or <kbd>Ctrl/Cmd + K</kbd></span>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Submit New Task / Save Task Edit</span>
+          <kbd>Enter</kbd>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Cancel Task Edit / Close Dialog</span>
+          <kbd>Esc</kbd>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Toggle Dark / Light Theme</span>
+          <kbd>T</kbd>
+        </div>
+        <div class="shortcut-item">
+          <span class="shortcut-desc">Open Keyboard Shortcuts</span>
+          <kbd>?</kbd>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Export / Import Dialog -->
+  <dialog id="backup-dialog" class="app-dialog" aria-labelledby="backup-title">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h3 id="backup-title">Backup & Restore Tasks</h3>
+        <button class="icon-btn close-dialog-btn" id="btn-close-backup" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body backup-options">
+        <div class="backup-block">
+          <h4>Export Data</h4>
+          <p>Download your current tasks as a JSON file for backup or transferring to another device.</p>
+          <button id="btn-do-export" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export Tasks (JSON)
+          </button>
+        </div>
+        <hr class="dialog-divider">
+        <div class="backup-block">
+          <h4>Import Data</h4>
+          <p>Load tasks from a previously saved FocusList JSON backup file.</p>
+          <input type="file" id="import-file-input" accept=".json" hidden>
+          <button id="btn-do-import" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Select JSON File to Import
+          </button>
+        </div>
+        <hr class="dialog-divider">
+        <div class="backup-block">
+          <h4>Sample Starter Tasks</h4>
+          <p>Reset and reload the initial demo tasks if you want a fresh start.</p>
+          <button id="btn-reload-samples" class="btn btn-secondary text-btn-warning">
+            Reload Starter Tasks
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- JavaScript Application Entry -->
+  <script src="app.js"></script>
+</body>
+</html>
